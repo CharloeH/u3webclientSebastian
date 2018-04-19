@@ -1,7 +1,3 @@
-/* Sebastian Horton
- * April 3, 2018
- * This progam reads from a web page and writes the data to a file.
- * */
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,58 +13,69 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace u3WebClientSebastian
+namespace u3HemanSebastian
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        string WordUsed = "";
+        string Output = null;
+        Random random = new Random(1);
+        System.IO.StreamReader ChooseWord = new System.IO.StreamReader("Words.txt");
+        System.IO.StreamWriter StreamWriter = new System.IO.StreamWriter("SelectedWord.txt");
+        
         public MainWindow()
         {
+            
             InitializeComponent();
-
-            //WebClient to get info
-            System.Net.WebClient theInterWebs = new System.Net.WebClient();
-            theInterWebs.BaseAddress = "https://raw.githubusercontent.com/IanMcT/WebClientReader/master/teams.txt";
-            System.IO.StreamReader streamReader = new System.IO.StreamReader(theInterWebs.OpenRead("https://raw.githubusercontent.com/IanMcT/WebClientReader/master/teams.txt"));
-            System.IO.StreamWriter streamWriter = new System.IO.StreamWriter("teams.txt");
+            string[] Word = new string[15];
+            string[] Guessed = new string[10];
+            Random random = new Random();
+        }
+         private void BeginGame(object sender, RoutedEventArgs e)
+        {
+            FindWord();
+        }
+        private void CheckLetter(object sender, RoutedEventArgs e)
+        {
+            if (WordUsed.Contains(txtInput.Text))
+            {
+                
+            }
+        }
+       
+            
+        private void FindWord()
+        {
             try
             {
-                //variable
-                string substring = "";
-                string AllTeams = "";
-                while(!streamReader.EndOfStream)
-                {   
-                    string line = streamReader.ReadLine();
-                    if (line.Contains("\"key\""))
+                int RNG = random.Next(1, 9);
+                while (!ChooseWord.EndOfStream)
+                {
+                    string line = ChooseWord.ReadLine();
+                    if (line.Contains(RNG.ToString()))
                     {
-                        // MessageBox.Show(line);
-                        //add the team to the variable with a new line
-                        int StartIndex = 12;
-                        int Length = 7;
-                        substring = line.Substring(StartIndex, Length);
-                        AllTeams = AllTeams + substring + "\r";
-                        //MessageBox.Show(substring);
-                        streamWriter.WriteLine(line);
-                        if (substring.Contains = ("\""))
-                        {
-
-                        }
+                         this.WordUsed = line.Substring(line.IndexOf(RNG.ToString()) + 2);
+                        StreamWriter.WriteLine(WordUsed);
+                       
                     }
-                     
+
                 }
-                MessageBox.Show(AllTeams);
-                //message box to show the variable
-                streamWriter.Flush();
-                streamWriter.Close();
-                streamReader.Close();
-                MessageBox.Show("\n" + "    Here in my garage, just bought this new Lamborghini here. It’s fun to drive up here in the Hollywood hills. But you know what I like more than materialistic things? Knowledge.");
-            } catch (Exception ex)
+                ChooseWord.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+                StreamWriter.Flush();
+                StreamWriter.Close();
+            }
+
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "error");
             }
-
         }
+
+        
     }
 }
+
+
